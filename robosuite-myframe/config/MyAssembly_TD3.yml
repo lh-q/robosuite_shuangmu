@@ -1,0 +1,65 @@
+# robosuite-myframe/config/MyAssembly_TD3_best.yml
+
+env:
+  control_freq: 10
+  controller: IK_POSE
+  env_name: MyLiftAssembly
+  hard_reset: false
+  horizon: 600
+  ignore_done: false
+  reward_scale: 1.0
+  robots:
+    - AUBOi10
+
+TD3:
+  policy: MlpPolicy
+  learning_rate: 0.0003          # 学习率稍小，保证稳定
+  buffer_size: 1000000
+  batch_size: 256
+  tau: 0.005                      # 软更新系数
+  gamma: 0.99
+  train_freq: 1000
+  gradient_steps: 1000
+  policy_kwargs:
+    net_arch: [400, 300]          # TD3推荐架构
+  verbose: 2
+  seed: 42
+  device: cuda
+  action_noise_mean: 0.0
+  action_noise_sigma: 0.1          # 控制精细探索
+  optimize_memory_usage: false      # 大模型内存优化
+  target_policy_noise: 0.2         # TD3双网络噪声
+  target_noise_clip: 0.5           # TD3目标噪声裁剪
+  policy_delay: 2                  # TD3延迟更新
+  tensorboard_log: ./logs_TD3           # TensorBoard日志位置（默认为None表示不记录）
+
+MY_DYNAMICS_ARGS:
+  randomize_density: true
+  randomize_viscosity: true
+  density_perturbation_ratio: 0.1
+  viscosity_perturbation_ratio: 0.1
+  body_names: ['fuelinghole', 'gripper0_fueling_gripper']
+  randomize_position: true
+  randomize_quaternion: true
+  randomize_inertia: true
+  randomize_mass: true
+  position_perturbation_size: 0.0015
+  quaternion_perturbation_size: 0.003
+  inertia_perturbation_ratio: 0.02
+  mass_perturbation_ratio: 0.02
+  geom_names: null
+  randomize_friction: true
+  randomize_solref: true
+  randomize_solimp: true
+  friction_perturbation_ratio: 0.1
+  solref_perturbation_ratio: 0.1
+  solimp_perturbation_ratio: 0.1
+  joint_names: null
+  randomize_stiffness: true
+  randomize_frictionloss: true
+  randomize_damping: true
+  randomize_armature: true
+  stiffness_perturbation_ratio: 0.1
+  frictionloss_perturbation_size: 0.05
+  damping_perturbation_size: 0.01
+  armature_perturbation_size: 0.01

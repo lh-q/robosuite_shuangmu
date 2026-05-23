@@ -1,0 +1,92 @@
+ # MyAssembly_PPO.yml
+# Environment settings (保持与你现有 env 一致)
+env:
+  control_freq: 10
+  controller: IK_POSE
+  env_name: MyLiftAssembly
+  hard_reset: false
+  horizon: 300             # 每个 episode 最大步长（与你环境一致）
+  ignore_done: false
+  reward_scale: 1.0
+  robots:
+    - AUBOi10
+
+# PPO 算法配置（适配 Stable-Baselines3 PPO）
+PPO:
+  # 基本模型参数
+  policy: MlpPolicy                 # 多层感知器策略（适合低维观测 + 连续动作）
+  device: cuda                      # 使用 GPU，若无 GPU 改为 cpu
+  seed: 42                          # 随机种子（可改）
+  verbose: 2                        # 输出等级
+
+  # 优化器与训练率
+  learning_rate: 0.0003               # PPO 常用起始 lr，任务精细可适当减小到 1e-4 ~ 3e-5
+  max_grad_norm: 0.4                # 梯度裁剪，防止爆炸
+
+  # rollout / batch 参数 —— 需配合 env.horizon 考虑
+  n_steps: 2048                     # rollout 长度（1024 通常对连续控制任务稳定）
+                                    # 注意：n_steps 应为 env 采样步数的整数倍；也可调整为 300 或 600
+  batch_size: 64                   # 每次优化的 minibatch 大小（<= n_steps）
+  n_epochs: 10                      # 每次 rollout 上的迭代次数
+  gamma: 0.99                       # 折扣因子
+  gae_lambda: 0.95                  # GAE 参数，偏向 0.95-0.98
+  normalize_advantage: true         # 归一化优势，通常有利于稳定训练
+
+  # 剪切与熵系数控制探索
+  clip_range: 0.2                   # PPO 剪切阈值
+  ent_coef: 0.01                    # 熵正则系数（可根据任务鼓励/抑制探索）
+  vf_coef: 0.5                      # value function loss 权重（常用 0.5）
+  clip_range_vf: null               # value function clipping（null 表示不启用）
+
+  # 其他训练控制
+  use_sde: true                    # 是否使用状态相关噪声（gSDE）
+  sde_sample_freq: 4
+  tensorboard_log: ./logs_PPO       # TensorBoard 日志目录
+
+  # 策略网络结构（依据你之前的较大网络，保留较宽架构）
+  policy_kwargs:
+    # net_arch: [1024, 512, 256]       # actor-critic 共享网络架构（可根据显存调小）
+    net_arch: [256,256]       # actor-critic 共享网络架构（可根据显存调小）
+
+  # 日志/统计窗口（与你之前配置保持一致）
+  stats_window_size: 100
+
+# 动力学随机化（保留你现有的 MY_DYNAMICS_ARGS，便于 sim2real）
+MY_DYNAMICS_ARGS:
+  # Opt parameters
+  randomize_density: true
+  randomize_viscosity: true
+  density_perturbation_ratio: 0.1
+  viscosity_perturbation_ratio: 0.1
+
+  # Body parameters
+  body_names: ['fuelinghole', 'gripper0_fueling_gripper']
+  randomize_position: true
+  randomize_quaternion: true
+  randomize_inertia: true
+  randomize_mass: true
+  position_perturbation_size: 0.0015
+  quaternion_perturbation_size: 0.003
+  inertia_perturbation_ratio: 0.02
+  mass_perturbation_ratio: 0.02
+
+  # Geom parameters
+  geom_names: null
+  randomize_friction: true
+  randomize_solref: true
+  randomize_solimp: true
+  friction_perturbation_ratio: 0.1
+  solref_perturbation_ratio: 0.1
+  solimp_perturbation_ratio: 0.1
+
+  # Joint parameters
+  joint_names: null
+  randomize_stiffness: true
+  randomize_frictionloss: true
+  randomize_damping: true
+  randomize_armature: true
+  stiffness_perturbation_ratio: 0.1
+  frictionloss_perturbation_size: 0.05
+  damping_perturbation_size: 0.01
+  armature_perturbation_size: 0.01
+

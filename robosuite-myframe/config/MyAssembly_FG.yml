@@ -1,0 +1,78 @@
+# Environment settings
+env:
+  control_freq: 10
+  controller: IK_POSE
+  env_name: MyLiftAssemblyNew
+  hard_reset: false
+  horizon: 300
+  ignore_done: false
+  reward_scale: 1.0
+  robots:
+    - AUBOi10
+
+# SAC Algorithm Configuration
+SAC:
+  # Model Parameters
+  policy: MlpPolicy                # 策略模型类型 (MlpPolicy, CnnPolicy, etc.)
+  learning_rate: 0.0005             # Adam优化器的学习率
+  buffer_size: 1000000              # 经验回放缓冲区的大小
+  learning_starts: 9300             # 学习开始前要收集的步骤数
+  batch_size: 512                   # 每次梯度更新的最小批量大小
+  tau: 0.005                        # 软更新系数 (Polyak更新)
+  gamma: 0.99                       # 折扣因子
+  train_freq: 2500                 # 每隔train_freq步更新模型
+  gradient_steps: 1000               # 每次卷展后执行的渐变步骤数
+  action_noise: null                # 动作噪声类型 (None表示不使用噪声)
+  replay_buffer_class: null         # 重放缓冲区类（如HerReplayBuffer）
+  replay_buffer_kwargs: {}          # 创建时传递给重放缓冲区的参数
+  optimize_memory_usage: false      # 启用内存高效变体的重放缓冲区
+  ent_coef: auto                    # 熵正则化系数 ('auto'表示自动学习)
+  target_update_interval: 5         # 目标网络更新的频率
+  target_entropy: 'auto'            # 目标熵，当ent_coef为'auto'时使用
+  use_sde: false                    # 是否使用广义状态相关探索(gSDE)
+  sde_sample_freq: -1               # 使用gSDE时的噪声矩阵采样频率
+  use_sde_at_warmup: false          # 预热阶段是否使用gSDE
+  stats_window_size: 100            # 滚动条记录窗口大小，指定计算平均成功率等的回合数
+  tensorboard_log: ./logs_SAC           # TensorBoard日志位置（默认为None表示不记录）
+  policy_kwargs: 
+    net_arch: [512, 256, 128, 64]             # 策略模型的其他参数
+  verbose: 2                         # 输出详细级别: 0 - 无输出, 1 - 信息消息, 2 - 调试信息
+  seed: 59                           # 伪随机生成器的种子 59在无噪声下可以跑通
+  device: cuda                       # 设备（cpu、cuda等），auto表示根据环境自动选择
+  _init_setup_model: true            # 是否在创建时构建网络
+
+MY_DYNAMICS_ARGS:
+    # Opt parameters
+    randomize_density: true
+    randomize_viscosity: true
+    density_perturbation_ratio: 0.1
+    viscosity_perturbation_ratio: 0.1
+    # Body parameters
+    body_names: ['fuelinghole3',"gripper0_fueling_gripper"]
+    randomize_position: true
+    randomize_quaternion: true
+    randomize_inertia: true
+    randomize_mass: true
+    position_perturbation_size: 0.0015
+    quaternion_perturbation_size: 0.003
+    inertia_perturbation_ratio: 0.02
+    mass_perturbation_ratio: 0.02
+    # Geom parameters
+    geom_names: null  # all geoms randomized
+    randomize_friction: true
+    randomize_solref: true
+    randomize_solimp: true
+    friction_perturbation_ratio: 0.1
+    solref_perturbation_ratio: 0.1
+    solimp_perturbation_ratio: 0.1
+    # Joint parameters
+    joint_names: null  # all joints randomized
+    randomize_stiffness: true
+    randomize_frictionloss: true
+    randomize_damping: true
+    randomize_armature: true
+    stiffness_perturbation_ratio: 0.1
+    frictionloss_perturbation_size: 0.05
+    damping_perturbation_size: 0.01
+    armature_perturbation_size: 0.01
+
