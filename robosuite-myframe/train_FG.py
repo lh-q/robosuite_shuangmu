@@ -45,16 +45,16 @@ if __name__ == "__main__":
         controller_configs=controller_config,
     )
     
-    # env = DomainRandomizationWrapper(
-    #     env,
-    #     randomize_color=False, # randomize_color currently only works for mujoco==3.1.1
-    #     randomize_camera=False,
-    #     randomize_lighting=False,
-    #     randomize_dynamics=True,
-    #     dynamics_randomization_args=my_dynamics_args,
-    #     randomize_on_reset=True,
-    #     randomize_every_n_steps = 300,
-    #     )
+    env = DomainRandomizationWrapper(
+        env,
+        randomize_color=False, # randomize_color currently only works for mujoco==3.1.1
+        randomize_camera=False,
+        randomize_lighting=False,
+        randomize_dynamics=True,
+        dynamics_randomization_args=my_dynamics_args,
+        randomize_on_reset=True,
+        randomize_every_n_steps = 300,
+        )
     gym_env = GymWrapper(env=env)
     mon_env = Monitor(gym_env)
     # Check if the environment is valid
@@ -71,9 +71,9 @@ if __name__ == "__main__":
     # 定义自定义观察记录 callback，每10步记录一次
     # callback = CallbackList([eval_callback, ObsLoggerCallback()])
 
-    model = SAC(**sac_options ) #从头训练 用这个
+    # model = SAC(**sac_options ) #从头训练 用这个
     # model= SAC.load("models/best_model_4lay_basenoise2.zip",env=mon_env)
-    #model= SAC.load("best_model",env=mon_env)
+    model= SAC.load("eval_logs/best_model.zip",env=mon_env)
     #model = SAC.load("my_assembly_nonoise",env= mon_env) #继续训练用这个
     #model = SAC.load("my_assembly",env= mon_env) #继续训练用这个
     #model.load_replay_buffer("my_assembly_buffer.pkl")
@@ -81,7 +81,7 @@ if __name__ == "__main__":
     mean_reward, std_reward = evaluate_policy(model, mon_env, n_eval_episodes=10)
     print(f"Loaded model reward: {mean_reward}, Std: {std_reward}")
     # Train the model
-    model.learn(total_timesteps=1500000,progress_bar=True, callback=eval_callback)  # You can adjust this number based on your needs
+    model.learn(total_timesteps=1000000,progress_bar=True, callback=eval_callback)  # You can adjust this number based on your needs
 
     # Save the trained model
     model.save("my_assembly_SAC_0518")

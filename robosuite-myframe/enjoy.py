@@ -43,13 +43,13 @@ if __name__ == "__main__":
         controller_configs=controller_config,
     )
     print(env.sim.model.body_names)
-    # env = DomainRandomizationWrapper(
-    #     env,
-    #     dynamics_randomization_args=my_dynamics_args,
-    #     randomize_on_reset=True,
-    #     randomize_every_n_steps = 300,
+    env = DomainRandomizationWrapper(
+        env,
+        dynamics_randomization_args=my_dynamics_args,
+        randomize_on_reset=True,
+        randomize_every_n_steps = 300,
 
-    #     )
+        )
     
     gym_env = GymWrapper(env=env)
 
@@ -69,9 +69,9 @@ if __name__ == "__main__":
                    
     # Save the trained model
     # model= SAC.load("robosuite-myframe/models/best_model_4lay_basenoise3.zip",env=mon_env)
-    # model= SAC.load("/home/lh/save2/my_assembly_SAC_0518.zip",env=mon_env)
+    model= SAC.load("/home/lh/save2/my_assembly_SAC_0518.zip",env=mon_env)
     # model= SAC.load("robosuite-myframe/my_assembly",env=mon_env)
-    model= SAC.load("eval_logs/best_model",env=mon_env)
+    # model= SAC.load("eval_logs/best_model",env=mon_env)
     # model= SAC.load("my_assembly_CG.zip",env=mon_env)
     # Optionally: evaluate the trained model
     #print(model.policy)
