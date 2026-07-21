@@ -49,8 +49,8 @@ MY_DYNAMICS_ARGS:
     viscosity_perturbation_ratio: 0.1
     # Body parameters
     body_names: ['fuelinghole3',"gripper0_fueling_gripper"]
-    randomize_position: true
-    randomize_quaternion: true
+    randomize_position: false
+    randomize_quaternion: false
     randomize_inertia: true
     randomize_mass: true
     position_perturbation_size: 0.0015
@@ -75,4 +75,3 @@ MY_DYNAMICS_ARGS:
     frictionloss_perturbation_size: 0.05
     damping_perturbation_size: 0.01
     armature_perturbation_size: 0.01
-
